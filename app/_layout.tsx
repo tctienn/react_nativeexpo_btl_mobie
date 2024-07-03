@@ -1,37 +1,23 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import Home from './home/index'
+const Drawer = createDrawerNavigator();
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
+export default function Layout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Drawer.Navigator>
+        <Drawer.Screen
+          name="(tabs)" // Tên trang và phải khớp với url từ gốc
+          options={{
+            drawerLabel: 'Home', // Nhãn hiển thị trong menu
+            title: 'Overview', // Tiêu đề trang
+          }}
+          component={Home} // Thay HomeScreen bằng màn hình bạn muốn dẫn đến
+        />
+
+
+      </Drawer.Navigator>
+    </GestureHandlerRootView>
   );
 }
