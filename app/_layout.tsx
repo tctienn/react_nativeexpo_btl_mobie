@@ -27,7 +27,7 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 // import { Drawer } from 'expo-router/drawer';
 
-import Ay from './Demo2'
+import Ay from './home/tab'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 const Drawer = createDrawerNavigator();
 
@@ -36,7 +36,7 @@ export default function Layout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer.Navigator>
         <Drawer.Screen
-          name="Demo2" // Tên trang và phải khớp với url từ gốc
+          name="home" // Tên trang và phải khớp với url từ gốc
           options={{
             drawerLabel: 'Home', // Nhãn hiển thị trong menu
             title: 'Overview', // Tiêu đề trang

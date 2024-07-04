@@ -23,7 +23,7 @@ const data = [
 
 
 
-const as = () => {
+const Index = () => {
     return (
         <ScrollView style={styles.container}>
             <TextInput
@@ -115,4 +115,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default as;
+export default Index;
