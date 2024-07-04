@@ -1,51 +1,54 @@
-// import { GestureHandlerRootView } from 'react-native-gesture-handler';
-// import { createDrawerNavigator } from '@react-navigation/drawer';
-// import Home from './home/index'
-// // import as from './(tabs)/as2'
-// const Drawer = createDrawerNavigator();
-
-// export default function Layout() {
-//   return (
-//     <GestureHandlerRootView style={{ flex: 1 }}>
-//       <Drawer.Navigator>
-//         <Drawer.Screen
-//           name="Home" // Tên trang và phải khớp với url từ gốc
-//           options={{
-//             drawerLabel: 'Home', // Nhãn hiển thị trong menu
-//             title: 'Overview', // Tiêu đề trang
-//           }}
-//           component={Home} // Thay HomeScreen bằng màn hình bạn muốn dẫn đến
-//         />
-
-
-//       </Drawer.Navigator>
-//     </GestureHandlerRootView>
-//   );
-// }
-
-
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-// import { Drawer } from 'expo-router/drawer';
-
-import Ay from './home/tab'
+import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createStackNavigator } from '@react-navigation/stack';
+
+import Ay from './home/tab';
+import HiddenScreen from './demo/router1';
+
 const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
+
+function DrawerNavigator() {
+  return (
+    <Drawer.Navigator>
+      <Drawer.Screen
+        name="home"
+        options={{
+          drawerLabel: 'Home',
+          title: 'Overview',
+        }}
+        component={Ay}
+      />
+
+    </Drawer.Navigator>
+  );
+}
+
+function AppNavigator() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Drawer"
+        component={DrawerNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="demo/router1"
+        component={HiddenScreen}
+        options={{ headerShown: false }}
+      />
+      {/* Thêm các màn hình khác vào đây nếu cần */}
+    </Stack.Navigator>
+  );
+}
 
 export default function Layout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer.Navigator>
-        <Drawer.Screen
-          name="home" // Tên trang và phải khớp với url từ gốc
-          options={{
-            drawerLabel: 'Home', // Nhãn hiển thị trong menu
-            title: 'Overview', // Tiêu đề trang
-          }}
-          component={Ay} // Thay HomeScreen bằng màn hình bạn muốn dẫn đến
-        />
-
-
-      </Drawer.Navigator>
+      <NavigationContainer independent={true}>
+        <AppNavigator />
+      </NavigationContainer>
     </GestureHandlerRootView>
   );
 }

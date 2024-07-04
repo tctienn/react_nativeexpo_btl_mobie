@@ -6,6 +6,7 @@ import Tab1Screen from './index';
 import Tab2Screen from './Demo2';
 import Tab3Screen from './dathang';
 import Tab4Screen from './home';
+import Tab5Screen from './ay';
 import datcho from './datcho';
 const Tab = createBottomTabNavigator();
 
@@ -62,6 +63,16 @@ export default function TabLayout() {
                 component={Tab4Screen}
                 options={{
                     tabBarLabel: 'Tab 4',
+                    tabBarIcon: ({ color, size }) => (
+                        <FontAwesome name="home" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Tab5"
+                component={Tab5Screen}
+                options={{
+                    tabBarLabel: 'Tab 5',
                     tabBarIcon: ({ color, size }) => (
                         <FontAwesome name="home" size={size} color={color} />
                     ),
