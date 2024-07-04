@@ -5,6 +5,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import Tab1Screen from './index';
 import Tab2Screen from './Demo2';
 import Tab3Screen from './dathang';
+import Tab4Screen from './home';
+import datcho from './datcho';
 const Tab = createBottomTabNavigator();
 
 export default function TabLayout() {
@@ -15,6 +17,16 @@ export default function TabLayout() {
                 tabBarInactiveTintColor: 'gray',
             }}
         >
+            <Tab.Screen
+                name="datcho"
+                component={datcho}
+                options={{
+                    tabBarLabel: 'datcho',
+                    tabBarIcon: ({ color, size }) => (
+                        <FontAwesome name="home" size={size} color={color} />
+                    ),
+                }}
+            />
             <Tab.Screen
                 name="Tab1"
                 component={Tab1Screen}
@@ -40,6 +52,16 @@ export default function TabLayout() {
                 component={Tab3Screen}
                 options={{
                     tabBarLabel: 'Tab 3',
+                    tabBarIcon: ({ color, size }) => (
+                        <FontAwesome name="home" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Tab4"
+                component={Tab4Screen}
+                options={{
+                    tabBarLabel: 'Tab 4',
                     tabBarIcon: ({ color, size }) => (
                         <FontAwesome name="home" size={size} color={color} />
                     ),
