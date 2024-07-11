@@ -6,6 +6,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Ay from './home/tab';
 import HiddenScreen from './demo/router1';
 
+
+/////////
+import Tabs from './homemain/tab';
+import DetailTheater from '../components/DetailTheater'
+import MovieDetailScreen from '../components/MovieDetailScreen'
+
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
@@ -16,6 +22,14 @@ function DrawerNavigator() {
         name="home"
         options={{
           drawerLabel: 'Home',
+          title: '',
+        }}
+        component={Tabs}
+      />
+      <Drawer.Screen
+        name="homemain"
+        options={{
+          drawerLabel: 'Home demo',
           title: 'Overview',
         }}
         component={Ay}
@@ -38,6 +52,21 @@ function AppNavigator() {
         component={HiddenScreen}
         options={{ headerShown: false }}
       />
+
+
+
+      {/* ////// */}
+      <Stack.Screen
+        name="TheaterDetailScreen"
+        component={DetailTheater}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MovieDetailScreen"
+        component={MovieDetailScreen}
+        options={{ headerShown: false }}
+      />
+
       {/* Thêm các màn hình khác vào đây nếu cần */}
     </Stack.Navigator>
   );

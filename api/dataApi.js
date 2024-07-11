@@ -1,13 +1,16 @@
+import axios from "axios";
 
-const url = "https://6404dcf7eed195a99f779a5e.mockapi.io"
+// const url = "https://66870f8683c983911b0472c4.mockapi.io"
+const url = "http://localhost:8080"
+
 const apiUser = axios.create({
     baseURL: url,
     timeout: 10000, // set timeout to 10 seconds
     headers: {
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
     },
 });
 
 export const get_ds_rap = () => {
-    return apiUser.get(`dsrap`)
+    return apiUser.get(`Threatrts`)
 }
