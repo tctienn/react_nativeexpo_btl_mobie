@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
-import { get_ds_rap } from '@/api/dataApi'
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { get_ds_rap, get_movie } from '@/api/dataApi'
 import TabReturn from '@/components/TabReturn'
 import Loader from '@/components/LoadDer'
+import { useNavigation } from '@react-navigation/native';
+import VideoComponent from './VideoComponent'
 
 const CinemaDetailScreen = ({ route }) => {
-    const { movieId, theaterId } = route.params;
+    const { movieId, theater } = route.params;
     let [check, setCheck] = useState(false)
     const [movie, Setmovie] = useState({})
-    const [data, setData] = useState({})
+    const [showTime, setShowTime] = useState([])
     const getData = async () => {
         // const restpont = await get_ds_rap()
         // restpont = restpont.json()
-        const response = await fetch('https://66870f8683c983911b0472c4.mockapi.io/ds');
-        const result = await response.json();
+        const response = await get_movie(movieId, theater.id)
+        setShowTime(response.data.showTime.split(',').map(time => time.trim().replace(/"/g, '')))
 
 
-        var array = await result[0].theaters.filter((e) => e.id == theaterId);
-        setData(array[0]);
-
-        // console.log("___________________", array)
-        var array2 = array[0].movies.filter(e => e.id == movieId)
-        Setmovie(array2[0])
+        // console.log("___________________", response.data)
+        Setmovie(response.data)
         setCheck(true)
 
 
@@ -31,6 +29,11 @@ const CinemaDetailScreen = ({ route }) => {
         getData()
     }, []);
 
+    const navigation = useNavigation()
+    const onBooked = (idMovie, idThreaster) => {
+        console.log('movie t', idMovie, idThreaster)
+        navigation.navigate('booking', { idMovie: idMovie, idThreater: idThreaster });
+    }
 
     if (check == false) {
         return (
@@ -39,25 +42,31 @@ const CinemaDetailScreen = ({ route }) => {
     }
     else {
         return (
-            <View style={styles.container}>
-                <TabReturn />
 
-                <Text style={styles.cinemaName}>{data.name}</Text>
-                <Text style={styles.cinemaAddress}>{data.address}</Text>
+            <ScrollView style={styles.container}>
+                {/* <TabReturn /> */}
 
+                <Text style={styles.cinemaName}>Rạp: {theater.name}</Text>
+                <Text style={styles.cinemaAddress}>Địa chỉ: {theater.coordinateEntity.address}</Text>
+                <View style={styles.movieDetailContainer}>
+                    <Image source={{ uri: movie.poster }} style={styles.moviePoster} />
+                    <VideoComponent movie={movie.movie} />
+                </View>
                 <View style={styles.movieDetailContainer}>
                     <Text style={styles.movieTitle}>{movie.title}</Text>
-                    <Text style={styles.movieGenre}>{movie.genre}</Text>
-                    <Text style={styles.movieDuration}>Duration: {movie.duration} mins</Text>
+                    <Text style={styles.movieGenre}>Thể loại: {movie.genre}</Text>
+                    <Text style={styles.movieDuration}>Thời lượng: {movie.duration} mins</Text>
+                    <Text style={styles.showtimeTitle}>Giá vé:{movie.price}</Text>
+                    <Text style={styles.showtimeTitle}>thời gian chiếu:</Text>
+                    {showTime?.map((item, i) => (
+                        <TouchableOpacity key={i} style={styles.searchButton} onPress={() => onBooked(movie.id, theater.id)}>
 
-                    <Text style={styles.showtimeTitle}>Showtimes:</Text>
-                    <FlatList
-                        data={movie.showtimes}
-                        keyExtractor={(item) => item}
-                        renderItem={({ item }) => <Text style={styles.showtime}>{item}</Text>}
-                    />
+                            <Text style={styles.showtime}> <Text style={styles.check}> Đặt vé : </Text>  {item}</Text>
+                        </TouchableOpacity>))}
+
                 </View>
-            </View>
+                <Text></Text>
+            </ScrollView>
 
         );
     }
@@ -89,6 +98,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 3,
+
     },
     movieTitle: {
         fontSize: 22,
@@ -115,12 +125,28 @@ const styles = StyleSheet.create({
     showtime: {
         fontSize: 16,
         color: '#34495e',
+        paddingLeft: 0,
+        borderRadius: 10,
+        backgroundColor: 'rgb(177, 178, 179)',
+        overflow: 'hidden',
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
+    moviePoster: {
+        width: "100%",
+        height: 250,
+        borderRadius: 10,
+    },
+    check: {
+        color: 'white',
+        backgroundColor: 'rgb(121, 156, 186)',
+        overflow: 'hidden',
+
+    }
+
 });
 
 export default CinemaDetailScreen;

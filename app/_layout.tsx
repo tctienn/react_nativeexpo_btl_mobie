@@ -11,10 +11,15 @@ import HiddenScreen from './demo/router1';
 import Tabs from './homemain/tab';
 import DetailTheater from '../components/DetailTheater'
 import MovieDetailScreen from '../components/MovieDetailScreen'
+import Profile from '@/components/Profile'
+import ThreaterMap from '@/components/ThreaterMap'
+import Search from "@/components/SearchForm"
+import Booked from "@/components/Booked"
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
+{/* /// cấu hình draw/// */ }
 function DrawerNavigator() {
   return (
     <Drawer.Navigator>
@@ -26,19 +31,30 @@ function DrawerNavigator() {
         }}
         component={Tabs}
       />
+
       <Drawer.Screen
+        name="Profile"
+        options={{
+          drawerLabel: 'ProFile',
+          title: 'Thông tin tài khoản',
+        }}
+        component={Profile}
+      />
+
+
+      {/* <Drawer.Screen
         name="homemain"
         options={{
           drawerLabel: 'Home demo',
           title: 'Overview',
         }}
         component={Ay}
-      />
+      /> */}
 
     </Drawer.Navigator>
   );
 }
-
+{/* /// cấu hình router/// */ }
 function AppNavigator() {
   return (
     <Stack.Navigator>
@@ -59,12 +75,32 @@ function AppNavigator() {
       <Stack.Screen
         name="TheaterDetailScreen"
         component={DetailTheater}
-        options={{ headerShown: false }}
+        options={{ headerShown: true, title: "Thông tin rạp " }}
       />
       <Stack.Screen
         name="MovieDetailScreen"
         component={MovieDetailScreen}
+        options={{ headerShown: true, title: "Thông tin phim " }}
+      />
+      <Stack.Screen
+        name="profile"
+        component={Profile}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="threatermap"
+        component={ThreaterMap}
+        options={{ headerShown: true, title: "Thông tin vị trí rạp " }}
+      />
+      <Stack.Screen
+        name="search"
+        component={Search}
+        options={{ headerShown: true, title: "Tìm kiếm" }}
+      />
+      <Stack.Screen
+        name="booking"
+        component={Booked}
+        options={{ headerShown: true, title: "booking" }}
       />
 
       {/* Thêm các màn hình khác vào đây nếu cần */}

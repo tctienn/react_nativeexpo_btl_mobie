@@ -11,8 +11,6 @@ export default function TabReturn() {
     return (
         <View style={styles.boderTab}>
             <Text style={styles.returnButton} onPress={() => PressReturn()}> {"<"} home
-
-
             </Text>
 
         </View>

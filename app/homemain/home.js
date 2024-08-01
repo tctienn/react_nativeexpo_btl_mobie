@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { get_ds_rap } from '@/api/dataApi';
 const HomeScreen = () => {
     const [data, setData] = useState();
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const navigation = useNavigation();
+    const [searchText, setSearchText] = useState("")
     useEffect(() => {
         fetchData();
     }, []);
 
     const fetchData = async () => {
         try {
-            const response = await fetch('https://66870f8683c983911b0472c4.mockapi.io/ds');
-            const result = await response.json();
-            setData(result[0].theaters);
+            const response = await get_ds_rap()
+            const result = response.data;
+            setData(result);
             setLoading(false);
         } catch (error) {
             console.error(error);
@@ -31,36 +33,45 @@ const HomeScreen = () => {
     }
 
     const onClickThreater = (idThreater) => {
-        navigation.navigate('TheaterDetailScreen', { theater: idThreater });
+        navigation.navigate('TheaterDetailScreen', { idTheater: idThreater });
     }
     const onClickDetailMovie = (movieId, theaterId) => {
-        navigation.navigate('MovieDetailScreen', { movieId: movieId, theaterId: theaterId });
+        console.log('test', movieId, theaterId)
+        navigation.navigate('MovieDetailScreen', { movieId: movieId, theater: theaterId });
+    }
+
+
+    const onPressSearch = () => {
+        navigation.navigate('search', { searchText: searchText });
     }
 
     return (
         <ScrollView style={styles.container}>
-            <Text style={styles.header}>Tìm Kiếm</Text>
+            <Text style={styles.header}>Tìm Kiếm : {searchText}</Text>
             <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Tìm kiếm phim, rạp..."
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
+                    value={searchText}
+                    onChangeText={e => setSearchText(e)}
                 />
                 <TouchableOpacity style={styles.searchButton}>
-                    <Text style={styles.searchButtonText}>Tìm</Text>
+                    <Text style={styles.searchButtonText} onPress={() => onPressSearch()}>Tìm</Text>
                 </TouchableOpacity>
             </View>
 
-            <Text style={styles.header}>Phim Đang Chiếu</Text>
-            {data.map((theater, index) => (
+            <Text style={styles.header}>Phim Sắp chiếu</Text>
+            {data?.map((theater, index) => (
                 <View key={index}>
                     <Text style={styles.theaterName}>{theater.name}</Text>
                     <ScrollView horizontal style={styles.moviesContainer}>
                         {theater.movies.map((movie, movieIndex) => (
                             <View key={movieIndex} style={styles.movieItem}>
-                                <Image source={{ uri: movie.poster }} style={styles.moviePoster} />
-                                <Text onPress={() => onClickDetailMovie(movie.id, theater.id)} style={styles.movieTitle}>{movie.title}</Text>
+                                <TouchableOpacity onPress={() => onClickDetailMovie(movie.id, theater)}>
+                                    <Image source={{ uri: movie.poster }} style={styles.moviePoster} />
+                                </TouchableOpacity>
+
+                                <Text onPress={() => onClickDetailMovie(movie.id, theater)} style={styles.movieTitle}>{movie.title}</Text>
                             </View>
                         ))}
                     </ScrollView>
@@ -68,12 +79,14 @@ const HomeScreen = () => {
             ))}
 
             <Text style={styles.header}>Rạp Gần Bạn</Text>
-            {data.map((theater, index) => (
+            {data?.map((theater, index) => (
                 <View key={index} style={styles.cinemaItem} >
-                    <Image source={{ uri: theater.image }} style={styles.cinemaImage} />
+                    <TouchableOpacity onPress={() => onClickThreater(theater.id)}>
+                        <Image source={{ uri: theater.image }} style={styles.cinemaImage} />
+                    </TouchableOpacity>
+
                     <View style={styles.cinemaTextContainer}>
-                        <Text style={styles.cinemaName} onPress={() => onClickThreater(theater)}>{theater.name}</Text>
-                        <Text style={styles.cinemaHours} onPress={() => onClickThreater(theater)}>{theater.address}</Text>
+                        <Text style={styles.cinemaName} onPress={() => onClickThreater(theater.id)}>{theater.name}</Text>
 
                     </View>
                 </View>

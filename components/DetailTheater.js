@@ -1,55 +1,87 @@
+import { get_threater } from '@/api/dataApi';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import Load from './LoadDer';
 
 const TheaterDetailScreen = ({ route }) => {
-    const { theater } = route.params;
+    const { idTheater } = route.params;
+    const [data, setData] = useState({})
+    const [check, setCheck] = useState(false)
+
+    const getData = async () => {
+
+        const response = await get_threater(idTheater)
+
+        setData(response.data)
+        setCheck(true)
+    }
+    useEffect(() => {
+        getData();
+    }, []);
+
+
     const navigation = useNavigation();
+
+    if (!check) {
+        return (<Load />)
+    }
+
+    const onClickDetailMovie = (movieId, theaterId) => {
+        get_threater(theaterId).then((data) => navigation.navigate('MovieDetailScreen', { movieId: movieId, theater: data.data }))
+
+    }
 
     return (
         <ScrollView style={styles.container}>
             <Text style={styles.theaterName}>  </Text>
-            <Text style={[styles.theaterName, styles.link]} onPress={() => navigation.navigate('home')}>{"<"} Home</Text>
-            <Image source={{ uri: theater.image }} style={styles.theaterImage} />
-            <Text style={styles.theaterName}>{theater.name}</Text>
-            <Text style={styles.theaterAddress}>{theater.address}</Text>
+            {/* <Text style={[styles.theaterName, styles.link]} onPress={() => navigation.navigate('home')}>{"<"} Home</Text> */}
+            <Image source={{ uri: data.image }} style={styles.theaterImage} />
+            <Text style={styles.theaterName}>{data.name}</Text>
+            <Text style={styles.theaterAddress} onPress={() => navigation.navigate('threatermap', { coordinateEntity: data.coordinateEntity, idThreater: data.id })}>Địa chỉ: {data.coordinateEntity.address}</Text>
 
-            <MapView
-                style={styles.map}
-                initialRegion={{
-                    latitude: theater.coordinates.latitude,
-                    longitude: theater.coordinates.longitude,
-                    latitudeDelta: 0.01,
-                    longitudeDelta: 0.01,
-                }}
-            >
-                <Marker
-                    coordinate={{
-                        latitude: theater.coordinates.latitude,
-                        longitude: theater.coordinates.longitude,
+            <TouchableOpacity onPress={() => navigation.navigate('threatermap', { coordinateEntity: data.coordinateEntity, idThreater: data.id })} >
+                <MapView
+                    style={styles.map}
+                    initialRegion={{
+                        latitude: data.coordinateEntity.latitude,
+                        longitude: data.coordinateEntity.longitude,
+                        latitudeDelta: 0.01,
+                        longitudeDelta: 0.01,
                     }}
-                    title={theater.name}
-                    description={theater.address}
-                />
-            </MapView>
+                >
+                    <Marker
+                        coordinate={{
+                            latitude: data.coordinateEntity.latitude,
+                            longitude: data.coordinateEntity.longitude,
+                        }}
+                        title={data.name}
+                        description={data.address}
+                    />
+                </MapView>
+            </TouchableOpacity>
+
 
             <Text style={styles.sectionTitle}>Phim đang chiếu</Text>
-            {theater.movies.map((movie, index) => (
+            {data.movies.map((movie, index) => (
                 <View key={index} style={styles.movieItem}>
-                    <Image source={{ uri: movie.poster }} style={styles.moviePoster} />
+                    <TouchableOpacity onPress={() => onClickDetailMovie(movie.id, movie.threaterr)}>
+                        <Image source={{ uri: movie.poster }} style={styles.moviePoster} />
+                    </TouchableOpacity>
+
                     <View style={styles.movieDetails}>
-                        <Text style={styles.movieTitle}>{movie.title}</Text>
+                        <Text style={styles.movieTitle} onPress={() => onClickDetailMovie(movie.id, movie.threaterr)} >{movie.title}</Text>
                         <Text style={styles.movieInfo}>Thể loại: {movie.genre}</Text>
                         <Text style={styles.movieInfo}>Thời lượng: {movie.duration} phút</Text>
-                        <Text style={styles.movieInfo}>Giờ chiếu: {movie.showtimes.join(', ')}</Text>
+                        <Text style={styles.movieInfo}>Giờ chiếu: {movie.showTime}</Text>
                     </View>
                 </View>
             ))}
 
-            <Text style={styles.sectionTitle}>Sơ đồ ghế ngồi</Text>
+            {/* <Text style={styles.sectionTitle}>Sơ đồ ghế ngồi</Text>
             <View style={styles.seatMap}>
-                {theater.seatMap.map((seat, index) => (
+                {data.seatMap.map((seat, index) => (
                     <TouchableOpacity
                         key={index}
                         style={[
@@ -60,7 +92,7 @@ const TheaterDetailScreen = ({ route }) => {
                         <Text style={styles.seatText}>{seat.row}{seat.seatNumber}</Text>
                     </TouchableOpacity>
                 ))}
-            </View>
+            </View> */}
         </ScrollView>
     );
 };
